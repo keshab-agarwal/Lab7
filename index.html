@@ -88,8 +88,16 @@
         let out = document.getElementById("output");
         document.getElementById("recordForm").style.display = "none";
         document.getElementById("recordIDcontainer").style.display = "none";
-        fetch(endpoint).then((resp) => resp.json()).then(function(data){
-          out.innerHTML = JSON.stringify(data);
+        fetch(endpoint).then(function(response){
+          if(!response.ok){
+            out.innerHTML = "Error " + response.status + ": " + response.statusText;
+            return;
+          }
+          else{
+            response.json().then(function(data) {
+              out.innerHTML = JSON.stringify(data);
+            });
+          }
         });
       }
 
@@ -103,8 +111,16 @@
         document.getElementById("recordIDcontainer").style.display = "none";
         let result = window.prompt("Record ID:");
         let out = document.getElementById("output");
-        fetch((endpoint + "/" + result)).then((resp) => resp.json()).then(function(data){
-          out.innerHTML = JSON.stringify(data);
+        fetch((endpoint + "/" + result)).then(function(response){
+          if(!response.ok){
+            out.innerHTML = "Error " + response.status + ": " + response.statusText;
+            return;
+          }
+          else{
+            response.json().then(function(data) {
+              out.innerHTML = JSON.stringify(data);
+            });
+          }
         });
       }
 
@@ -112,63 +128,85 @@
       // From the 4 CRUD actions, this is the CREATE action, and uses the POST http method.
       // The main difference from updateRecord() will be the URL you send data to; check
       // the writeup to view the URL pattern for create and update
-      function createRecord() {
-        let endpoint = document.getElementById("endpoint").value;
-        document.getElementById("recordForm").style.display = "inline";
-        document.getElementById("recordIDcontainer").style.display = "none";
+      function createRecord(message) {
+        var endpoint;
         let author, title;
-        document
-          .getElementById("recordForm")
-          .addEventListener("submit", event => {
-            event.preventDefault();
-            author = document.getElementById('author').value;
-            title = document.getElementById('title').value;
-            let out = document.getElementById("output");
-            fetch(endpoint, {
-              method: 'POST',
-              body: JSON.stringify({
-                "title": author,
-                "author": title
-              }),
-              headers: {
-                "Content-Type": "application/json; charset=utf-8"
-              }
-            }).then((resp) => resp.json()).then(function(data){
-              out.innerHTML = JSON.stringify(data);
-            });
-        });
+
+        if(message == 'show'){
+          endpoint = document.getElementById("endpoint").value;
+          document.getElementById("recordForm").style.display = "inline";
+          document.getElementById("recordIDcontainer").style.display = "none";
+        }
+        
+        if(message == 'submit') {
+          event.preventDefault();
+          endpoint = document.getElementById("endpoint").value;
+          author = document.getElementById('author').value;
+          title = document.getElementById('title').value;
+          let out = document.getElementById("output");
+          fetch(endpoint, {
+            method: 'POST',
+            body: JSON.stringify({
+              "title": author,
+              "author": title
+            }),
+            headers: {
+              "Content-Type": "application/json; charset=utf-8"
+            }
+          }).then(function(response){
+            if(!response.ok){
+              out.innerHTML = "Error " + response.status + ": " + response.statusText;
+              return;
+            }
+            else{
+              response.json().then(function(data) {
+                out.innerHTML = JSON.stringify(data);
+              });
+            }
+          });
+        }
       }
 
       // This function should use fetch to update one existing entry in the given endpoint.
       // From the 4 CRUD actions, this is the UPDATE action, and uses the PUT http method.
       // The main difference from createRecord() will be the URL you send data to; check
       // the writeup to view the URL pattern for create and update
-      function updateRecord() {
-        let endpoint = document.getElementById("endpoint").value;
-        document.getElementById("recordForm").style.display = "inline";
-        document.getElementById("recordIDcontainer").style.display = "inline";
-        let author, title, id;
-        document
-          .getElementById("recordForm")
-          .addEventListener("submit", event => {
-            event.preventDefault();
-            author = document.getElementById('author').value;
-            title = document.getElementById('title').value;
-            id = document.getElementById("recordID").value;
-            let out = document.getElementById("output");
-            fetch((endpoint + "/" + id), {
-              method: 'PUT',
-              body: JSON.stringify({
-                "title": author,
-                "author": title
-              }),
-              headers: {
-                "Content-Type": "application/json; charset=utf-8"
-              }
-            }).then((resp) => resp.json()).then(function(data){
-              out.innerHTML = JSON.stringify(data);
-            });
-        });
+      function updateRecord(message) {
+        let author, title, id, endpoint;
+        if(message == 'show'){
+          endpoint = document.getElementById("endpoint").value;
+          document.getElementById("recordForm").style.display = "inline";
+          document.getElementById("recordIDcontainer").style.display = "inline";
+        }
+        
+        if(message == 'submit'){
+          event.preventDefault();
+          endpoint = document.getElementById("endpoint").value;
+          author = document.getElementById('author').value;
+          title = document.getElementById('title').value;
+          id = document.getElementById("recordID").value;
+          let out = document.getElementById("output");
+          fetch((endpoint + "/" + id), {
+            method: 'PUT',
+            body: JSON.stringify({
+              "title": author,
+              "author": title
+            }),
+            headers: {
+              "Content-Type": "application/json; charset=utf-8"
+            }
+          }).then(function(response){
+            if(!response.ok){
+              out.innerHTML = "Error " + response.status + ": " + response.statusText;
+              return;
+            }
+            else{
+              response.json().then(function(data) {
+                out.innerHTML = JSON.stringify(data);
+              });
+            }
+          });
+        }
       }
 
       // This function should use fetch to delete one existing entry in the given endpoint.
@@ -188,8 +226,16 @@
           headers: {
             "Content-Type": "application/json; charset=utf-8"
           }
-        }).then((resp) => resp.json()).then(function(data){
-          out.innerHTML = JSON.stringify(data);
+        }).then(function(response){
+          if(!response.ok){
+            out.innerHTML = "Error " + response.status + ": " + response.statusText;
+            return;
+          }
+          else{
+            response.json().then(function(data) {
+              out.innerHTML = JSON.stringify(data);
+            });
+          }
         });
       }
 
